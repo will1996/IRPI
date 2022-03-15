@@ -37,12 +37,12 @@ RM        = rm -rf
 #            -L /usr/lib/gcc-lib/i386-redhat-linux/2.96 -lg2c
 #LIBLAPACK = -L /home/stoledo/Public/Linux_P4SSE2/lib -llapack
 
-LIBBLAS   = -L/opt/local/stow/OpenBLAS-0.2.14/lib -lopenblas
+LIBBLAS   =  -lopenblas
 LIBLAPACK = -llapack
 
 LIBMETIS  = -lmetis
 
-LIBF77 = -L$(GFORTRANPATH) -lgfortran
+LIBF77 =  -lgfortran
 LIBC   = -lm 
 
 #########################################################

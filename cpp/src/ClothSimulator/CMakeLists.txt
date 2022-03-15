@@ -18,14 +18,20 @@ add_subdirectory("AlgLib")
 #----------------------------#------------------------------
 #Torch uses python to store its cmake module path, invoke python and snag the path in TorchModulePath
 execute_process(COMMAND "python3" "-cimport torch;print(torch.utils.cmake_prefix_path)" OUTPUT_VARIABLE TorchModulePath)
+#this method of gettings things form python leaves a newline that causes problems, so remove the whitespace
+string(STRIP ${TorchModulePath} TorchModulePath)
 message("Got torch module path from python: " ${TorchModulePath} )
-
-find_package(Torch REQUIRED PATHS "/usr/local/lib/python3.9/site-packages/torch/share/cmake/")
+message("Overriding Cuda search path to environment variable: " $ENV{CUDA_HOME})
+set(CUDNN_LIBRARY_PATH /opt/common/cudnn/cudnn-10.2-8.2.1.32/lib64)
+set(CUDNN_INCLUDE_PATH /opt/common/cudnn/cudnn-10.2-8.2.1.32/include)
+set(CUDA_TOOLKIT_ROOT_DIR $ENV{CUDA_HOME})
+find_package(Torch REQUIRED PATHS ${TorchModulePath})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 if(NOT ${TORCH_FOUND})
     message(FATAL_ERROR "LIBTORCH NOT FOUND!  Make sure you install it with: pip3 install torch")
     else()
     message(" Found Torch at: " "${TORCH_LIBRARIES}")
+    message("Torch compile flags: ${TORCH_CXX_FLAGS}")
 endif()
 #----------------------------#------------------------------
 #Find python include directories
@@ -48,7 +54,7 @@ endif()
 #----------------------------#------------------------------
 #build ClothSimulator library
 #----------------------------#------------------------------
-add_library(ClothSimulator)
+add_library(ClothSimulator SHARED)
 
 file(GLOB source_files src/*.cpp src/*.hpp)
 
@@ -60,7 +66,7 @@ message("Include files for ClothSimulator Lib: " ${include_files})
 #----------------------------#------------------------------
 # Link everything up
 #----------------------------#------------------------------
-target_compile_options(ClothSimulator PRIVATE ${TORCH_CXX_FLAGS})
+target_compile_options(ClothSimulator PUBLIC ${TORCH_CXX_FLAGS})
 target_link_libraries(ClothSimulator PRIVATE ${TORCH_LIBRARIES})
 target_include_directories(ClothSimulator SYSTEM PRIVATE BEFORE ${PythonIncludeDir})
 target_sources(ClothSimulator PRIVATE ${source_files} PUBLIC ${include_files})

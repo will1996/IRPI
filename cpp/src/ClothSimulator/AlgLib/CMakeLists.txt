@@ -1,6 +1,6 @@
 message("Found alglib")
 
-add_library(AlgLib)
+add_library(AlgLib SHARED)
 
 file(GLOB AlgLibSources src/*.cpp src/*.h)
 message("AlgLibSources: " ${AlgLibSources})

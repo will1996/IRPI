@@ -33,9 +33,6 @@
 #include "simulation.hpp"
 #include "timer.hpp"
 #include "util.hpp"
-#define BOOST_NO_CXX11_SCOPED_ENUMS
-#include <boost/filesystem.hpp>
-#undef BOOST_NO_CXX11_SCOPED_ENUMS
 #include <cstdio>
 #include <fstream>
 
@@ -183,13 +180,3 @@ void resume_physics (const vector<string> &args) {
     offline_loop();
 }
 
-void copy_file (const string &input, const string &output) {
-    if(input == output) {
-        return;
-    }
-    if(boost::filesystem::exists(output)) {
-        boost::filesystem::remove(output);
-    }
-    boost::filesystem::copy_file(
-       input, output);
-}
